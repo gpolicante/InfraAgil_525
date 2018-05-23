@@ -6,7 +6,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-
+# isto daqui é uma configuração global, posso criar varias maquinas da mesma configuracao atraves daqui
   config.vm.box = "ubuntu/xenial64"
 
   config.vm.box_check_update = false
@@ -18,16 +18,19 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "512"
+    vb.memory = "2048"
   end
-  
+  # aqui acaba a configuracao global 
   (1..2).each do |i|
     config.vm.define "ubuntu#{i}" do |node|
+  node.vm.provider "virtualbox" do |vb|
+    vb.memory = "2500"
+  end
       node.vm.hostname = "ubuntu#{i}"
       node.vm.provision "shell", inline: <<-SHELL
         apt clean all
         apt update
-        
+        apt install python -y     
       SHELL
     end
   end
@@ -37,11 +40,11 @@ Vagrant.configure("2") do |config|
       node.vm.box = "centos/7"
       node.vm.hostname = "dev#{i}"
       node.vm.provision "shell", inline: <<-SHELL
-        yum update -y
+        #yum update -y
       SHELL
     end
   end
-  
+ # este ultimo serve para as 4 maquinas  
   config.vm.provision "shell", inline: <<-SHELL
     sudo mkdir -p /root/.ssh/
     sudo touch /root/.ssh/authorized_keys
